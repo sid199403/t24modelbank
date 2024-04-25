@@ -56,7 +56,14 @@ docker network create transact-net
 
 docker run -d -p 6161:61616 -p 8161:8161 --network=transact-net --name=transact-activemq -it tlctraining.azurecr.io/activemq:5.16.2
 
-docker run -d -p 30060:8080 -p 9970:9990 --name=transact-app-r23 --network=transact-net --env-file env-config.properties -it tlctraining.azurecr.io/transact-app-h2db:R23.4.7
+docker run -d -p 30060:8080 -p 9970:9990 --name=transact-app-r23 --network=transact-net --env-file env-config.properties -it tlctraining.azurecr.io/transact-app-h2db:R23.7
+
+docker run -d -p 8080:8080 -p 9990:9990 --name=transact-web-r22 --network=transact-net --env-file env-config.properties -it tlctraining.azurecr.io/transact-web:R23.7
+
+docker run -d -p 8070:8080 -p 9980:9990 --name=transact-api-r22 --network=transact-net --env-file env-config.properties -it tlctraining.azurecr.io/transact-api:R23.7
+
+
+
 
 -------------------------------------
 
