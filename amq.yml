@@ -1,0 +1,53 @@
+#kubectl apply -f amq.yml
+#kubectl describe svc transact-activemq
+apiVersion: v1
+kind: Service
+metadata:
+  name: transact-activemq
+spec:
+  type: NodePort
+  ports:
+  - port: 61616
+    protocol: TCP
+    targetPort: 61616
+    name: amq
+  - port: 8161
+    protocol: TCP
+    targetPort: 8161
+    name: amq-console
+    nodePort: 30161 #Node Port
+  selector:
+    app: transact-amq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transact-amq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transact-amq
+  template:
+    metadata:
+      labels:
+        app: transact-amq
+    spec:
+      containers:
+      - image: activemq:5.16.2
+        imagePullPolicy: IfNotPresent
+        name: transact-amq
+        ports:
+        - containerPort: 61616
+          name: amq
+          protocol: TCP
+        - containerPort: 8161
+          name: amq-console
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 0.5G
+          requests:
+            cpu: 1000m
+            memory: 0.5G
