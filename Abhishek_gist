@@ -1,0 +1,68 @@
+Hello, world!
+
+Adding a line which should be visible on VDI
+
+resource.server.options.password=EKxRRoZQZ5NYM1g3OCLLGnm1BoSj7CKmFd1ZzWlqasm1eKrsBShS3JZhRxkHr8jL
+resource.server.options.tenant.id.1=SYSTEM
+resource.server.options.tenant.version.1=1
+resource.server.options.tenant.jdbc.url.1=jdbc:h2:tcp://host.docker.internal:7075/RSDB;DB_CLOSE_ON_EXIT=FALSE;MODE=Oracle;TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=0;FILE_LOCK=NO;IFEXISTS=TRUE;CACHE_SIZE=8192;LOCK_TIMEOUT=60000
+resource.server.options.tenant.jdbc.username.1=t24
+resource.server.options.tenant.jdbc.password.1=QEQBzNWRFUbVix6EFhs2eLuJGGpKwtLWkhMoydJoMjmE8iJkT5X0h9jsPdWsCmbX
+
+--------------------------------------------
+<env-entry-type>java.lang.String</env-entry-type>
+<env-entry-value>OFS_SOURCE=IRISPA</env-entry-value>
+
+<session-type>Stateful</session-type>
+<transaction-type>Bean</transaction-type>
+
+<s:security>            
+  <ejb-name>CatalogServiceBeanTAFJ</ejb-name>            
+  <s:security-domain>other</s:security-domain>        
+</s:security>
+
+
+------------------------------------
+
+appenders=RollingAppender
+appender.RollingAppender.type=RollingFile
+appender.RollingAppender.name=RollingAppender
+appender.RollingAppender.fileName=/srv/Temenos/logs/ResourceServerLogger.log
+appender.RollingAppender.filePattern = /srv/Temenos/logs/ResourceServerLogger.%d{yyy-MM-dd}.log.gz
+
+
+
+
+
+
+
+
+
+temn.tafj.runtime.ud.internal.regression=true
+
+browser.options.dynamicIRIS.rpService=http://transact-app-r23:8080/irf-rp-services
+browser.options.god.catalogService=http://transact-app-r23:8080/irf-t24catalog-services
+browser.options.resourceServer.url=http://transact-app-r23:8080/ResourceServer
+browser.options.remoteAuth.url=http://transact-app-r23:8080/Authenticator/auth/logon
+
+<s:security>            
+  <ejb-name>CatalogServiceBeanTAFJ</ejb-name>            
+  <s:security-domain>other</s:security-domain>        
+</s:security>
+
+docker build preimage-transact-app-h2d-R23.4.7 -t tlctraining.azurecr.io/transact-app-h2db:R23.4.7
+
+docker network create transact-net
+
+docker run -d -p 6161:61616 -p 8161:8161 --network=transact-net --name=transact-activemq -it tlctraining.azurecr.io/activemq:5.16.2
+
+docker run -d -p 30060:8080 -p 9970:9990 --name=transact-app-r23 --network=transact-net --env-file env-config.properties -it tlctraining.azurecr.io/transact-app-h2db:R23.4.7
+
+-------------------------------------
+
+docker exec -it transact-app-r23 bash
+curl --user INPUTT:123456 http://localhost:8080/irf-t24catalog-services/api/getApplicationAsXml?id=ND.DEAL
+
+
+
+
