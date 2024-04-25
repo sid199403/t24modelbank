@@ -64,7 +64,7 @@ docker exec -it transact-app-r23 bash
 curl --user INPUTT:123456 http://localhost:8080/irf-t24catalog-services/api/getApplicationAsXml?id=ND.DEAL
 
 docker build -t temnubi9wf26jdk11:R24.2 .
-docker build -t preimage-transact-app-h2d:R24.2 . --build-arg BASE_TAG=R24.2
+docker build -t transact-app-h2d:R24.2 . --build-arg BASE_TAG=R24.2
 
 
 
