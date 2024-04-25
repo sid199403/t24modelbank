@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transact-app-r23
+spec:
+  type: NodePort
+  ports:
+    - port: 8080 #Service Port
+      protocol: TCP
+      targetPort: 8080 #Container Port
+      nodePort: 30060 #Node Port
+  selector:
+    app: transact-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: transact-app
+spec:
+   replicas: 1 #Number of replicas
+   selector:
+     matchLabels:
+       app: transact-app
+   template:
+     metadata:
+       labels:
+         app: transact-app
+
+     spec:
+         containers:
+         - name: transact-app-h2
+           image: tlctraining.azurecr.io/transact-app-h2db:R23.4.7
+           imagePullPolicy: IfNotPresent
+           
+           resources:
+             requests:
+               cpu: 1
+               memory: 2G
+             limits:
+               cpu: 2
+               memory: 5G
+               
+           ports:
+             - name: tafj
+               protocol: TCP
+               containerPort: 8080
+
+           env:
+                - name: DB_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: db_url
+                - name: DB_POOL_MIN
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: db_pool_min
+                - name: DB_POOL_MAX
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: db_pool_max
+                - name: DB_USER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: user
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: externals
+                      key: DB_PASSWORD                
+                - name: IDLE_TIMEOUT_VALUE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: idle_timeout_value                
+                - name: JMS_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: url
+                - name: JMS_VPN
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: vpn
+                - name: JMS_USER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: user
+                - name: JMS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: externals
+                      key: JMS_PASSWORD           
+                - name: OLTP_ACTIVE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: oltp_active
+                - name: SERVICE_ACTIVE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: service_active
+                - name: LOG_HOME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: log_home
+                - name: EDGE_PROP
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: edge_prop
+                - name: TAFJ_appender
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: tafj_appender
+                - name: TEMN_MONITOR
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-jms-config
+                      key: temn_monitor
+                - name: APP_USER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: appuser
+                - name: APP_PWD
+                  valueFrom:
+                    secretKeyRef:
+                      name: externals
+                      key: APP_PWD
+                - name: MAX_THREAD_COUNT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: max_thread_count
+                - name: MDB_POOL_MAX
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: mdb_pool_max
+                - name: MAX_POOL_SIZE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: max_pool_size
+                - name: OFS_QUEUE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: ofs_queue
+                - name: OFSREPLY_QUEUE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: r23-db-config
+                      key: ofsreply_queue
